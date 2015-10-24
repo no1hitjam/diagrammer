@@ -15,7 +15,8 @@ WT = Enum(
 )
 
 def create_dic(wt_expansion_tuple_list):
-	# tuple[0]: wordtype, tuple[1]: expansion
+# summary: create dictionary of possible parse nodes from list of tuples
+# tuple[0]: wordtype, tuple[1]: expansion
 	nodes = {}
 	for wt_expansion_tuple in wt_expansion_tuple_list:
 		nodes[wt_expansion_tuple[0]] = wt_expansion_tuple[1]
@@ -49,6 +50,7 @@ nodes = create_dic([
 ])
 
 def get_expansions(node):
+# summary: return list of child nodes
 	if type(node) is str:
 		return [[node]]
 	else:

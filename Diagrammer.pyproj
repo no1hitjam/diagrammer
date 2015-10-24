@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>14030855-3fb7-4728-8c50-50f4e5468dbf</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>parser.py</StartupFile>
+    <StartupFile>diagrammer_console.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,8 +26,11 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="parser.py" />
-    <Compile Include="wordtypes.py" />
+    <Compile Include="diagrammer_console.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sentence_parser.py" />
+    <Compile Include="word_types.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md">
