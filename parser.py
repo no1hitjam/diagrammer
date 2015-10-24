@@ -10,19 +10,27 @@ def print_node_lists(node_lists):
 			print str(node) + " "
 		print "\n"
 
-def get_ancestry_str(node, left):
+def get_ancestry_list(node):
 	if node.parent is None:
-			return str(node)
+		return [node]
 	else:
-		if left:
-			return str(node) + " <- " + get_ancestry_str(node.parent, left)
-		else:
-			return get_ancestry_str(node.parent, left) + " -> " + str(node)
+		return get_ancestry_list(node.parent) + [node]
 
+def print_tree(nodes):
+	ancestries = map(get_ancestry_list, nodes)
+	for a_idx, ancestry in enumerate(ancestries):
+		a_str = ""
+		for n_idx, node in enumerate(ancestry):
+			if a_idx == 0:
+				a_str += (" -> " if n_idx != 0 else "") + str(node)
+			else:
+				if len(ancestries[a_idx - 1]) > n_idx and node == ancestries[a_idx - 1][n_idx]:
+					for i in range(len(str(node)) + (4 if n_idx != 0 else 0)):
+						a_str += " "
+				else:
+					a_str += (" -> " if n_idx != 0 else "") + str(node)
+		print a_str
 
-def print_tree(nodes, left = True):
-	for node in nodes:
-		print get_ancestry_str(node, left)
 
 class ParseNode:
 	def __init__(self, word, parent):
@@ -49,7 +57,7 @@ def parse_string_lists(input_word_list = [], node_lists = [[ParseNode(WT.Sentenc
 		# fill str_match_lists with node_lists with matching ParseNoded strings up to the idx.
 		str_match_lists = []
 		while len(node_lists) > 0:
-			# print_node_lists(node_lists)
+			# print_node_lists(node_lists) # DEBUG
 			node_list = node_lists.pop() 
 			# check if node_list is too small and needs to be skipped
 			if len(node_list) <= idx: 
@@ -68,19 +76,16 @@ def parse_string_lists(input_word_list = [], node_lists = [[ParseNode(WT.Sentenc
 						node_lists.append(node_list[:idx] + expansion + node_list[idx + 1:])
 					else:
 						node_lists.append(node_list[:idx] + expansion)
-		# prepare next set of lists
+		# prepare for next set of lists
 		node_lists = str_match_lists
 		idx += 1
 
-	size_appropriate_node_lists = []
-	for node_list in node_lists:
-		if len(node_list) == len(input_word_list):
-			size_appropriate_node_lists.append(node_list)
-	return size_appropriate_node_lists
+	# return size appropriate node_lists
+	return filter(lambda x: len(x) == len(input_word_list), node_lists)
 
 
 
 # print_node_lists(parse_string_lists(["the","smelly","Harry", "and", "Harry", "sat"]))
-# result = parse_string_lists(["Harry", "and", "Harry", "sat"])
+# result = parse_string_lists(["the","smelly","Harry", "and", "Harry", "sat"])
 # print_node_lists(result)
-# print print_tree(result[0], False)
+# print print_tree(result[0])
