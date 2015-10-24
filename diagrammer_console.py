@@ -1,7 +1,6 @@
 # console.py
 # summary: deals with console I/O
 
-#from parser import parse_string_lists
 from sentence_parser import parse_string_lists
 
 def get_ancestry_list(node):
@@ -10,7 +9,8 @@ def get_ancestry_list(node):
 	else:
 		return get_ancestry_list(node.parent) + [node]
 
-def print_tree(nodes):
+def tree_str(nodes):
+	return_str = ""
 	ancestries = map(get_ancestry_list, nodes)
 	for a_idx, ancestry in enumerate(ancestries):
 		a_str = ""
@@ -24,7 +24,8 @@ def print_tree(nodes):
 						a_str += " "
 				else:
 					a_str += arrow(n_idx) + str(node)
-		print a_str
+		return_str += a_str + "\n"
+	return return_str + "_____________________________________________________________"
 
 def split_sentence(sentence_str):
 	comma_idx = sentence_str.find(", ")
@@ -37,10 +38,16 @@ def split_sentence(sentence_str):
 		return [sentence_str[:space_idx]] + split_sentence(sentence_str[space_idx + 1:] if len(sentence_str) > space_idx else [])
 	else: return [sentence_str[:comma_idx], ","] + split_sentence(sentence_str[comma_idx + 2:])
 
+
 input_str = ""
 while(input_str != "q"):
 	input_str = raw_input("Enter sentence:\n")
 	input_str_split = split_sentence(input_str)
 	results = parse_string_lists(input_str_split)
+	result_file = open("result.txt", "w")
+	result_file.truncate()
+	result_file.write("possible trees:\n")
 	for result in results:
-		print_tree(result)
+		print tree_str(result)
+		result_file.write(tree_str(result))
+	result_file.close()
