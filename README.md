@@ -1,4 +1,4 @@
 Sentence Diagrammer
 ===
 
-Turns sentence strings into diagrammed trees that describe the sentence structure
+Turns English sentence strings into diagrammed trees that describe the sentence structure
