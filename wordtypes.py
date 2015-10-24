@@ -14,16 +14,12 @@ WT = Enum(
     'Verb'
 )
 
-class WordTypeNode:
-	def __init__(self, parent, expansions):
-		self.parent = parent
-		self.expansions = expansions
-
 def create_dic(wt_expansion_tuple_list):
 	# tuple[0]: wordtype, tuple[1]: expansion
 	nodes = {}
 	for wt_expansion_tuple in wt_expansion_tuple_list:
-		nodes[wt_expansion_tuple[0]] = WordTypeNode(wt_expansion_tuple[0], wt_expansion_tuple[1])
+		nodes[wt_expansion_tuple[0]] = wt_expansion_tuple[1]
+
 	return nodes
 	
 	
@@ -57,6 +53,6 @@ def get_expansions(node):
 		return [[node]]
 	else:
 		if node in nodes:
-			return nodes[node].expansions
+			return nodes[node]
 		else:
 			return [["Error: word not it nodes dictionary"]]
