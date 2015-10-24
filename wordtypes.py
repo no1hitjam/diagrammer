@@ -1,3 +1,6 @@
+﻿# wordtypes.py
+# summary: contains data structures for holding tree of words and word types
+
 from enum import Enum
 
 WT = Enum(
@@ -35,11 +38,3 @@ def get_expansions(node):
 			return nodes[node].expansions
 		else:
 			return [["Error: word not it nodes dictionary"]]
-
-#nodes = {
-#	WT.Sentence : [[WT.Subject, WT.Predicate]],
-#	WT.Subject : [[WT.Noun], [WT.Noun, "And", WT.Subject], [WT.Noun, "Or", WT.Subject]],
-#	WT.Noun : [["Harry"]],
-#	WT.Predicate : [["sat"]]
-#}
-

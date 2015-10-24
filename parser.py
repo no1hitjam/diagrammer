@@ -1,5 +1,7 @@
+﻿# parser.py
+# summary: where imported string lists are parsed into trees
+
 from wordtypes import WT
-#from wordtypes import nodes
 from wordtypes import get_expansions
 
 def print_node_lists(node_lists):
@@ -23,7 +25,6 @@ def parse_string_lists(input_word_list = [], node_lists = [[]]):
 		str_match_lists = []
 		print "idx: " + str(idx)
 		while len(node_lists) > 0:
-			#print "len(node_lists): " + str(len(node_lists))
 			#print_node_lists(node_lists)
 			node_list = node_lists.pop()
 			#print "node_list: " + str(node_list) 
@@ -41,7 +42,6 @@ def parse_string_lists(input_word_list = [], node_lists = [[]]):
 			# otherwise, expand
 			else:
 				for expansion in get_expansions(node_list[idx]):
-					#print "expansion: " + str(expansion)
 					if idx + 1 < len(node_list):
 						node_lists.append(node_list[:idx] + expansion + node_list[idx + 1:])
 					else:
