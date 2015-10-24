@@ -7,9 +7,10 @@ from word_types import get_expansions
 def print_node_lists(node_lists):
 # summary: debug function for printing node lists
 	for node_list in node_lists:
+		print_str = ""
 		for node in node_list:
-			print str(node) + " "
-		print "\n"
+			print_str += str(node) + " "
+		print print_str
 	print "-------"
 
 class ParseNode:
@@ -41,11 +42,9 @@ def parse_string_lists(input_word_list):
 		# fill str_match_lists with node_lists with matching ParseNoded strings up to the idx.
 		str_match_lists = []
 		while len(node_lists) > 0:
-			#print_node_lists(node_lists) # DEBUG
 			node_list = node_lists.pop() 
 			# check if node_list is too small and needs to be skipped
-			if len(node_list) <= idx: 
-				continue
+			if len(node_list) <= idx: continue
 			# if the current index is a str, check if it matches the current word
 			if type(node_list[idx].word) is str:
 				#print node_list[idx] + ", " + cur_word
@@ -56,12 +55,10 @@ def parse_string_lists(input_word_list):
 			# otherwise, expand
 			else:
 				for expansion in ParseNodifyExpansions(node_list[idx]):
-					if idx + 1 < len(node_list):
-						node_lists.append(node_list[:idx] + expansion + node_list[idx + 1:])
-					else:
-						node_lists.append(node_list[:idx] + expansion)
+					node_lists.append(node_list[:idx] + expansion + (node_list[idx + 1:] if idx + 1 < len(node_list) else []))
 		# prepare for next set of lists
 		node_lists = str_match_lists
+		# print_node_lists(node_lists) # DEBUG
 		idx += 1
 
 	# return size appropriate node_lists

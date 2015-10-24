@@ -26,10 +26,21 @@ def print_tree(nodes):
 					a_str += arrow(n_idx) + str(node)
 		print a_str
 
+def split_sentence(sentence_str):
+	comma_idx = sentence_str.find(", ")
+	space_idx = sentence_str.find(" ")
+	if comma_idx == -1 and space_idx == -1:
+		return [sentence_str]
+	elif space_idx == 0:
+		return split_sentence(sentence_str[1:])
+	elif space_idx < comma_idx or comma_idx == -1:
+		return [sentence_str[:space_idx]] + split_sentence(sentence_str[space_idx + 1:] if len(sentence_str) > space_idx else [])
+	else: return [sentence_str[:comma_idx], ","] + split_sentence(sentence_str[comma_idx + 2:])
+
 input_str = ""
 while(input_str != "q"):
 	input_str = raw_input("Enter sentence:\n")
-	input_str_split = input_str.split()
-	results = parse_string_lists(input_str.split())
+	input_str_split = split_sentence(input_str)
+	results = parse_string_lists(input_str_split)
 	for result in results:
 		print_tree(result)

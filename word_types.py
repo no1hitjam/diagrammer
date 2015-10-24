@@ -7,9 +7,14 @@ WT = Enum(
 	'Sentence',
 	'Subject',
 	'Predicate',
+	'IndirectObject',
     'DirectObject',
+	'ObjectiveComplement',
+	'Appositive',
+	'CompoundableObject',
     'Object',
 	'Noun',
+	'CompoundableAdjective',
     'Adjective',
     'Verb'
 )
@@ -38,26 +43,50 @@ nodes = create_dic([
     ]),
 	( WT.Predicate, [
         [WT.Verb], 
+		[WT.Verb, WT.IndirectObject, WT.DirectObject], # [12] Indirect object
 		[WT.Verb, WT.DirectObject], # [7] Direct object
         [WT.Verb, "and", WT.Predicate] # [4] Compound predicate
     ]),
-    ( WT.DirectObject, [ 
-        [WT.Object]
+	( WT.IndirectObject, [ 
+        [WT.CompoundableObject]
     ]),
+    ( WT.DirectObject, [ 
+        [WT.CompoundableObject]
+    ]),
+	( WT.Appositive, [ 
+        [WT.CompoundableObject]
+    ]),
+	( WT.ObjectiveComplement, [ 
+        [WT.CompoundableAdjective]
+    ]),
+	( WT.CompoundableObject, [
+		[WT.Object],
+		[WT.Object, "and", WT.CompoundableObject] # [8] Compound direct objects
+	]),
     ( WT.Object, [
         [WT.Noun], 
-        [WT.Adjective, WT.Object]
+		[WT.Noun, WT.ObjectiveComplement], # [17] Objective Complement
+		[WT.Noun, ",", WT.Appositive, ","], # [18] Appositive
+        [WT.CompoundableAdjective, WT.Object]
     ]),
+	( WT.CompoundableAdjective, [
+		[WT.Adjective],
+		[WT.Adjective, ",", WT.CompoundableAdjective],
+		[WT.Adjective, "and", WT.CompoundableAdjective]
+	]),
     ( WT.Noun, convert_csv_to_expansion(
 		"Fred, Harry, chair, couch, table, down"
 	)),
     ( WT.Adjective, convert_csv_to_expansion(
-		"the, a, smelly"
+		"the, a, smelly, purple, green, blue"
 	)),
     ( WT.Verb, convert_csv_to_expansion(
-		"sat, sit, sits"
+		"sat, sit, sits, painted"
 	))
+	
 ])
+
+# chck [14], [15]
 
 def get_expansions(node):
 # summary: return list of child nodes
