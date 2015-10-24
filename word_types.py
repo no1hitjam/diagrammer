@@ -22,31 +22,41 @@ def create_dic(wt_expansion_tuple_list):
 		nodes[wt_expansion_tuple[0]] = wt_expansion_tuple[1]
 
 	return nodes
-	
+
+def convert_csv_to_expansion(csv_str):
+	return map(lambda x: x.split(" "), csv_str.split(", "))
 	
 nodes = create_dic([
 	( WT.Sentence, [
-        [WT.Subject, WT.Predicate] 
+		[WT.Subject, WT.Predicate], # [1] Simple subject and predicate
+		[WT.Predicate]	# [2] Understood subject (for commands, directives) 
     ]),
 	( WT.Subject, [
         [WT.Object], 
-        [WT.Object, "and", WT.Subject], 
+        [WT.Object, "and", WT.Subject], # [5] Compound subject
         [WT.Object, "or", WT.Subject]
     ]),
 	( WT.Predicate, [
         [WT.Verb], 
-        [WT.Verb, "and", WT.Predicate]
+		[WT.Verb, WT.DirectObject], # [7] Direct object
+        [WT.Verb, "and", WT.Predicate] # [4] Compound predicate
     ]),
-    ( WT.DirectObject, [
+    ( WT.DirectObject, [ 
         [WT.Object]
     ]),
     ( WT.Object, [
         [WT.Noun], 
         [WT.Adjective, WT.Object]
     ]),
-    ( WT.Noun, [["Harry"]] ),
-    ( WT.Adjective, [["smelly"], ["the"]] ),
-    ( WT.Verb, [["sat"]] )
+    ( WT.Noun, convert_csv_to_expansion(
+		"Fred, Harry, chair, couch, table, down"
+	)),
+    ( WT.Adjective, convert_csv_to_expansion(
+		"the, a, smelly"
+	)),
+    ( WT.Verb, convert_csv_to_expansion(
+		"sat, sit, sits"
+	))
 ])
 
 def get_expansions(node):
