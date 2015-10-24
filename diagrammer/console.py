@@ -38,16 +38,20 @@ def split_sentence(sentence_str):
 		return [sentence_str[:space_idx]] + split_sentence(sentence_str[space_idx + 1:] if len(sentence_str) > space_idx else [])
 	else: return [sentence_str[:comma_idx], ","] + split_sentence(sentence_str[comma_idx + 2:])
 
+def console_loop():
+	print "Enter 'q' to quit"
+	input_str = ""
+	while(input_str != "q"):
+		input_str = raw_input("Enter sentence:\n")
+		input_str_split = split_sentence(input_str)
+		results = parse_string_lists(input_str_split)
+		result_file = open("out/result.txt", "w+")
+		result_file.truncate()
+		result_file.write("possible trees:\n")
+		for result in results:
+			print tree_str(result)
+			result_file.write(tree_str(result))
+		result_file.close()
 
-input_str = ""
-while(input_str != "q"):
-	input_str = raw_input("Enter sentence:\n")
-	input_str_split = split_sentence(input_str)
-	results = parse_string_lists(input_str_split)
-	result_file = open("result.txt", "w")
-	result_file.truncate()
-	result_file.write("possible trees:\n")
-	for result in results:
-		print tree_str(result)
-		result_file.write(tree_str(result))
-	result_file.close()
+#if __name__ == "__main__":
+#	console_loop()
