@@ -7,7 +7,11 @@ WT = Enum(
 	'Sentence',
 	'Subject',
 	'Predicate',
-	'Noun'
+    'DirectObject',
+    'Object',
+	'Noun',
+    'Adjective',
+    'Verb'
 )
 
 class WordTypeNode:
@@ -24,10 +28,28 @@ def create_dic(wt_expansion_tuple_list):
 	
 	
 nodes = create_dic([
-	( WT.Sentence, [[WT.Subject, WT.Predicate]] ),
-	( WT.Subject, [[WT.Noun], [WT.Noun, "and", WT.Subject], [WT.Noun, "or", WT.Subject]] ),
-	( WT.Noun, [["Harry"]] ),
-	( WT.Predicate, [["sat"]] )
+	( WT.Sentence, [
+        [WT.Subject, WT.Predicate] 
+    ]),
+	( WT.Subject, [
+        [WT.Object], 
+        [WT.Object, "and", WT.Subject], 
+        [WT.Object, "or", WT.Subject]
+    ]),
+	( WT.Predicate, [
+        [WT.Verb], 
+        [WT.Verb, "and", WT.Predicate]
+    ]),
+    ( WT.DirectObject, [
+        [WT.Object]
+    ]),
+    ( WT.Object, [
+        [WT.Noun], 
+        [WT.Adjective, WT.Object]
+    ]),
+    ( WT.Noun, [["Harry"]] ),
+    ( WT.Adjective, [["smelly"], ["the"]] ),
+    ( WT.Verb, [["sat"]] )
 ])
 
 def get_expansions(node):
