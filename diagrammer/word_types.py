@@ -20,6 +20,7 @@ WT = Enum(
     'Verb',
 	'CompoundableAdverb',
 	'Adverb',
+	"PrepositionObject",
 	'Preposition'
 )
 
@@ -51,10 +52,11 @@ nodes = create_dic([
 		[WT.Verb, ",", WT.Predicate], # [4] Compound predicate
         [WT.Verb, "and", WT.Predicate], # [4] Compound predicate
 		[WT.Verb, WT.ComparativeAdjective, "than", WT.CompoundableObject],
+		# TODO: [WT.Predicate, WT.CompoundableAdverb], instead of below
 		[WT.Verb, WT.CompoundableAdverb],
-		[WT.CompoundableAdverb, WT.Verb],
-		[WT.CompoundableAdverb, WT.Verb, WT.CompoundableAdverb],
-		[WT.Verb, WT.Preposition, WT.CompoundableObject]
+		[WT.CompoundableAdverb, WT.Predicate],
+		[WT.CompoundableAdverb, WT.Predicate, WT.CompoundableAdverb],
+		[WT.Verb, WT.PrepositionObject]
     ]),
 	( WT.IndirectObject, [ 
         [WT.CompoundableObject]
@@ -71,6 +73,11 @@ nodes = create_dic([
 	( WT.CompoundableObject, [
 		[WT.Object],
 		[WT.Object, "and", WT.CompoundableObject] # [8] Compound direct objects
+	]),
+	( WT.PrepositionObject, [
+		[WT.Preposition, WT.CompoundableObject],
+		[WT.Preposition, WT.CompoundableObject, "and", WT.PrepositionObject],
+		[WT.Preposition, WT.CompoundableObject, WT.PrepositionObject]
 	]),
     ( WT.Object, [
         [WT.Noun], 
@@ -101,10 +108,10 @@ nodes = create_dic([
 		"sat, sit, sits, painted, paint, paints, is, was, will be"
 	)),
 	( WT.Adverb, convert_csv_to_expansion(
-		"quickly, smartly, smellily"
+		"quickly, smartly, smellily, quietly"
 	)),
 	( WT.Preposition, convert_csv_to_expansion(
-		"in, under, around"
+		"in, under, around, on"
 	))
 ])
 

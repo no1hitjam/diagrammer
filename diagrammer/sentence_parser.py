@@ -32,7 +32,7 @@ def ParseNodifyExpansions(parent):
 		parsed_expansions.append(parsed_expansion)
 	return parsed_expansions
 
-def parse_string_lists(input_word_list):
+def parse_string_list(input_word_list):
 # summary: turn a sentence string list into a parse tree
 	node_lists = [[ParseNode(WT.Sentence, None)]]
 	idx = 0

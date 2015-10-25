@@ -1,7 +1,7 @@
-# console.py
+﻿# console.py
 # summary: deals with console I/O
 
-from sentence_parser import parse_string_lists
+from sentence_parser import parse_string_list
 
 def get_ancestry_list(node):
 	if node.parent is None:
@@ -44,7 +44,7 @@ def console_loop():
 	while(input_str != "q"):
 		input_str = raw_input("Enter sentence:\n")
 		input_str_split = split_sentence(input_str)
-		results = parse_string_lists(input_str_split)
+		results = parse_string_list(input_str_split)
 		result_file = open("out/result.txt", "w+")
 		result_file.truncate()
 		result_file.write("possible trees:\n")
@@ -52,6 +52,3 @@ def console_loop():
 			print tree_str(result)
 			result_file.write(tree_str(result))
 		result_file.close()
-
-#if __name__ == "__main__":
-#	console_loop()
