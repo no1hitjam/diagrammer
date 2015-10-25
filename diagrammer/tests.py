@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 import sentence_parser
 import console
 
@@ -32,13 +32,18 @@ class TestParser(unittest.TestCase):
     def test7(self): self.assert_(parse(
         "Fred quickly painted the chair"
     ))
-# TODO: Make this test pass
-#    def test8(self): self.assert_(parse(
-#        "Fred painted the chair quickly and quietly"
-#    ))
+    def test8(self): self.assert_(parse(
+        "Fred painted the chair quickly and quietly"
+    ))
     def test9(self): self.assert_(parse(
         "Fred is taller than the chair"
     ))
     def test10(self): self.assert_(parse(
         "Fred is around the chair and on the chair"
+    ))
+    def test11(self): self.assert_(parse(
+        "Fred painted green on the chair"
+    ))
+    def test12(self): self.assert_(parse(
+        "Fred painted the chair crumbling under the chair and the chair crumbling under the chair"
     ))

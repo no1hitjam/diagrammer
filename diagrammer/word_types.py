@@ -21,7 +21,9 @@ WT = Enum(
     'CompoundableAdverb',
     'Adverb',
     "PrepositionPhrase",
-    'Preposition'
+    'Preposition',
+    'ParticiplePhrase',
+    'Participle'
 )
 
 def create_dic(expansion_blueprint_list):
@@ -49,27 +51,46 @@ def create_dic(expansion_blueprint_list):
     return nodes
 
 def expand_csv(csv_str):
-    return map(lambda x: x.split(" "), csv_str.split(", "))
-    
+    return map(lambda x: x.split(" "), csv_str[:-2].split(", "))
+   
+# import words
+# TODO: actual importing
+nouns = "Fred, Harry, chair, couch, table, down, "
+
+participles =  "crumbling, fighting, "
+
+adjectives = "the, a, smelly, purple, green, blue, "
+
+comparative_adjectives = "taller, shorter, smarter, purpler, better, "
+
+verbs = "sat, sit, sits, painted, paint, paints, is, was, will be, "
+
+adverbs = "quickly, smartly, smellily, quietly, "
+
+prepositions = "in, under, around, on, "
+
+
+# create tree structure
 nodes = create_dic([
 
-    [ WT.Sentence, [ [ WT.Subject, WT.Predicate ],        # [1] Simple subject and predicate
+    [ WT.Sentence, [ [ WT.Subject, WT.Predicate ],      # [1] Simple subject and predicate
                      [ WT.Subject, ",", WT.Predicate ], # [19] Direct address
-                     [ WT.Predicate ]                    # [2] Understood subject (for commands, directives) 
+                     [ WT.Predicate ]                   # [2] Understood subject (for commands, directives) 
     ] ],
 
     [ WT.Subject, [ [ WT.CompoundableObject ] ] ],
 
     [ WT.Predicate, [ [ WT.Verb ], 
-                      [ WT.Verb, WT.IndirectObject, WT.DirectObject ],                        # [12] Indirect object
-                      [ WT.Verb, WT.DirectObject ],                                            # [7] Direct object
+                      [ WT.Verb, WT.IndirectObject, WT.DirectObject ],                       # [12] Indirect object
+                      [ WT.Verb, WT.DirectObject ],                                          # [7] Direct object
+                      [ WT.Verb, WT.Adjective ],                                             # [23] Predicate adjective
                       [ WT.Verb, ",", WT.Predicate ],                                        # [4] Compound predicate
-                      [ WT.Verb, "and", WT.Predicate ],                                        # [4] Compound predicate
+                      [ WT.Verb, "and", WT.Predicate ],                                      # [4] Compound predicate
                       [ WT.Verb, WT.ComparativeAdjective, "than", WT.CompoundableObject ],
                       [ WT.CompoundableAdverb, WT.Predicate ]
-    ], [ # added to the end of every expansion
-       [ WT.CompoundableAdverb ],
-       [ WT.PrepositionPhrase ]
+    ] , [ # added to the end of every expansion
+        [ WT.CompoundableAdverb ],
+        [ WT.PrepositionPhrase ]
     ] ],
 
     [ WT.IndirectObject, [ [ WT.CompoundableObject ] ] ],
@@ -89,35 +110,41 @@ nodes = create_dic([
                               [ WT.Preposition, WT.CompoundableObject, WT.PrepositionPhrase ]
     ] ],
 
-    [ WT.Object, [ [WT.Noun], 
-                   [WT.Noun, WT.ObjectiveComplement], # [17] Objective Complement
-                   [WT.Noun, ",", WT.Appositive, ","], # [18] Appositive
-                   [WT.CompoundableAdjective, WT.Object]
+    [ WT.Object, [ [ WT.Noun ], 
+                   [ WT.Noun, WT.ObjectiveComplement ],       # [17] Objective Complement
+                   [ WT.Noun, ",", WT.Appositive, "," ],      # [18] Appositive
+                   [ WT.CompoundableAdjective, WT.Object ]
     ] ],
 
-    [ WT.CompoundableAdjective, [ [WT.Adjective],
-                                  [WT.Adjective, ",", WT.CompoundableAdjective],
-                                  [WT.Adjective, "and", WT.CompoundableAdjective]
+    [ WT.CompoundableAdjective, [ [ WT.Adjective ],
+                                  [ WT.Adjective, ",", WT.CompoundableAdjective ],
+                                  [ WT.Adjective, "and", WT.CompoundableAdjective ]
     ] ],
 
-    [ WT.CompoundableAdverb, [ [WT.Adverb],
-                               [WT.Adverb, ",", WT.CompoundableAdverb],
-                               [WT.Adverb, "and", WT.CompoundableAdverb]
+    [ WT.CompoundableAdverb, [ [ WT.Adverb ],
+                               [ WT.Adverb, ",", WT.CompoundableAdverb ],
+                               [ WT.Adverb, "and", WT.CompoundableAdverb ]
     ] , [ # added to the end of every expansion
-        [WT.PrepositionPhrase]
+        [ WT.PrepositionPhrase ]
     ] ],
 
-    [ WT.Noun, expand_csv( "Fred, Harry, chair, couch, table, down" ) ],
+    [ WT.ParticiplePhrase, [ [ WT.Participle ],
+                             [ WT.Participle, WT.PrepositionPhrase ]
+    ] ],
 
-    [ WT.Adjective, expand_csv( "the, a, smelly, purple, green, blue") ],
+    [ WT.Noun, expand_csv( nouns ) ],
 
-    [ WT.ComparativeAdjective, expand_csv( "taller, shorter, smarter, purpler, better" ) ],
+    [ WT.Participle, expand_csv(participles) ],
 
-    [ WT.Verb, expand_csv( "sat, sit, sits, painted, paint, paints, is, was, will be" ) ],
+    [ WT.Adjective, expand_csv( adjectives + comparative_adjectives + participles) ],
 
-    [ WT.Adverb, expand_csv( "quickly, smartly, smellily, quietly" ) ],
+    [ WT.ComparativeAdjective, expand_csv( comparative_adjectives ) ],
 
-    [ WT.Preposition, expand_csv( "in, under, around, on" ) ]
+    [ WT.Verb, expand_csv( verbs ) ],
+
+    [ WT.Adverb, expand_csv( adverbs ) ],
+
+    [ WT.Preposition, expand_csv( prepositions ) ]
 ])
 
 # chck [14], [15], [20], [23], [27]
