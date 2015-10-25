@@ -47,3 +47,6 @@ class TestParser(unittest.TestCase):
     def test12(self): self.assert_(parse(
         "Fred painted the chair crumbling under the chair and the chair crumbling under the chair"
     ))
+    def test13(self): self.assert_(parse(
+        "painting is blue"
+    ))

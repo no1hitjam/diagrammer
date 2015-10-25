@@ -6,6 +6,7 @@ from enum import Enum
 WT = Enum(
     'Sentence',
     'Subject',
+    'Gerund',
     'Predicate',
     'IndirectObject',
     'DirectObject',
@@ -17,6 +18,7 @@ WT = Enum(
     'CompoundableAdjective',
     'ComparativeAdjective',
     'Adjective',
+    'CompoundableVerb',
     'Verb',
     'CompoundableAdverb',
     'Adverb',
@@ -63,7 +65,7 @@ adjectives = "the, a, smelly, purple, green, blue, "
 
 comparative_adjectives = "taller, shorter, smarter, purpler, better, "
 
-verbs = "sat, sit, sits, painted, paint, paints, is, was, will be, "
+verbs = "sat, sit, sits, sitting, painted, paint, paints, painting, is, was, will be, "
 
 adverbs = "quickly, smartly, smellily, quietly, "
 
@@ -78,7 +80,13 @@ nodes = create_dic([
                      [ WT.Predicate ]                   # [2] Understood subject (for commands, directives) 
     ] ],
 
-    [ WT.Subject, [ [ WT.CompoundableObject ] ] ],
+    [ WT.Subject, [ [ WT.CompoundableObject ],
+                    [ WT.Gerund ]              
+    ] ],
+
+    [ WT.Gerund, [ [ WT.CompoundableVerb ],
+                   [ WT.CompoundableVerb, WT.CompoundableAdjective ]            
+    ] ],
 
     [ WT.Predicate, [ [ WT.Verb ], 
                       [ WT.Verb, WT.IndirectObject, WT.DirectObject ],                       # [12] Indirect object
@@ -103,6 +111,11 @@ nodes = create_dic([
 
     [ WT.CompoundableObject, [ [ WT.Object ],
                                [ WT.Object, "and", WT.CompoundableObject ] # [8] Compound direct objects
+    ] ],
+
+    [ WT.CompoundableVerb, [ [ WT.Verb ],
+                             [ WT.Verb, ",", WT.CompoundableVerb],
+                             [ WT.Verb, "and", WT.CompoundableVerb]
     ] ],
 
     [ WT.PrepositionPhrase, [ [ WT.Preposition, WT.CompoundableObject ],
