@@ -50,3 +50,6 @@ class TestParser(unittest.TestCase):
     def test13(self): self.assert_(parse(
         "painting is blue"
     ))
+    def test14(self): self.assert_(parse(
+        "to paint and paint is to be and be"
+    ))

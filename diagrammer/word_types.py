@@ -10,6 +10,7 @@ WT = Enum(
     'Sentence',
     'Subject',
     'Gerund',
+    'Predicate_',
     'Predicate',
     'IndirectObject',
     'DirectObject',
@@ -23,6 +24,11 @@ WT = Enum(
     'Adjective',
     'Verb_',
     'Verb',
+    'GerundVerb_',
+    'GerundVerb',
+    'InfinitivePhrase',
+    'InfinitiveVerb_',
+    'InfinitiveVerb',
     'Adverb_',
     'Adverb',
     "PrepositionPhrase",
@@ -75,9 +81,11 @@ adjectives = "the, a, smelly, purple, green, blue, "
 
 comparative_adjectives = "taller, shorter, smarter, purpler, better, "
 
-gerund_verbs = "sitting, painting, being"
+gerund_verbs = "sitting, painting, being, "
 
-verbs = "sat, sit, sits, painted, paint, paints, is, was, will be, are, "
+infinitive_verbs = "to sit, to paint, to be, "
+
+verbs = "sat, sit, sits, painted, paint, paints, is, was, be, will be, are, " + gerund_verbs + infinitive_verbs
 
 adverbs = "quickly, smartly, smellily, quietly, "
 
@@ -87,19 +95,21 @@ prepositions = "in, under, around, on, "
 # create tree structure
 nodes = create_dic([
 
-    [ WT.Sentence, [ [ WT.Subject, WT.Predicate ],      # [1] Simple subject and predicate
-                     [ WT.Subject, ",", WT.Predicate ], # [19] Direct address
-                     [ WT.Predicate ]                   # [2] Understood subject (for commands, directives) 
+    [ WT.Sentence, [ [ WT.Subject, WT.Predicate_ ],      # [1] Simple subject and predicate
+                     [ WT.Subject, ",", WT.Predicate_ ], # [19] Direct address
+                     [ WT.Predicate_ ]                   # [2] Understood subject (for commands, directives) 
     ] ],
 
     [ WT.Subject, [ [ WT.Object_ ] ] ],
 
-    [ WT.Predicate, [ [ WT.Verb_ ], 
-                      [ WT.Verb_, WT.IndirectObject, WT.DirectObject ],                       # [12] Indirect object
-                      [ WT.Verb_, WT.DirectObject ],                                          # [7] Direct object
-                      [ WT.Verb_, WT.Adjective ],                                             # [23] Predicate adjective
-                      [ WT.Verb_, WT.ComparativeAdjective, "than", WT.Object_ ],
-                      [ WT.Adverb_, WT.Predicate ]
+    [ WT.Predicate_, Compound ( WT.Predicate, WT.Predicate_ ) ],
+
+    [ WT.Predicate, [ [ WT.Verb ], 
+                      [ WT.Verb, WT.IndirectObject, WT.DirectObject ],     # [12] Indirect object
+                      [ WT.Verb, WT.DirectObject ],                        # [7] Direct object
+                      [ WT.Verb, WT.Adjective_ ],                           # [23] Predicate adjective
+                      [ WT.Verb, WT.ComparativeAdjective, "than", WT.Object_ ],
+                      [ WT.Adverb_, WT.Predicate_ ]
     ] , [ # added to the end of every expansion
         [ WT.Adverb_ ],
         [ WT.PrepositionPhrase ]
@@ -119,14 +129,21 @@ nodes = create_dic([
     ] ],
 
     [ WT.Object, [ [ WT.Noun ], 
-                   [ WT.Gerund ], 
+                   [ WT.GerundVerb_ ], 
                    [ WT.Noun, WT.ObjectiveComplement ],       # [17] Objective Complement
                    [ WT.Noun, ",", WT.Appositive, "," ],      # [18] Appositive
                    [ WT.Adjective_, WT.Object ]
     ] ],
 
-    [ WT.Gerund, [ [ WT.Verb_ ],
-                   [ WT.Verb_, WT.Adjective_ ]            
+    [ WT.InfinitivePhrase, [ [ WT.InfinitiveVerb_ ], 
+                             [ WT.InfinitiveVerb_, WT.IndirectObject, WT.DirectObject ],     # [12] Indirect object
+                             [ WT.InfinitiveVerb_, WT.DirectObject ],                        # [7] Direct object
+                             [ WT.InfinitiveVerb_, WT.Adjective ],                           # [23] Predicate adjective
+                             [ WT.InfinitiveVerb_, WT.ComparativeAdjective, "than", WT.Object_ ],
+                             [ WT.Adverb_, WT.InfinitivePhrase ]
+    ] , [ # added to the end of every expansion
+        [ WT.Adverb_ ],
+        [ WT.PrepositionPhrase ]
     ] ],
 
     [ WT.ParticiplePhrase, [ [ WT.Participle ],
@@ -134,9 +151,15 @@ nodes = create_dic([
     ] ],
 
     # compoundables
-    [ WT.Object_, Compound( WT.Object, WT.Object_ ) ],
+    [ WT.Object_, Compound( WT.Object, WT.Object_ ) + [
+                          [ WT.InfinitivePhrase ]
+    ] ],
 
     [ WT.Verb_, Compound( WT.Verb, WT.Verb_ ) ],
+
+    [ WT.GerundVerb_, Compound( WT.GerundVerb, WT.GerundVerb_ ) ], 
+
+    [ WT.InfinitiveVerb_, Compound( WT.InfinitiveVerb, WT.Verb_ ) ],
 
     [ WT.Adjective_, Compound( WT.Adjective, WT.Adjective_ ) ],
 
@@ -146,6 +169,8 @@ nodes = create_dic([
     ] ],
 
     # strings
+    # TODO: These need to be different. Not just a list of strings, these are structures that need
+    #       some sort of search parameter passed in to find what we're looking for.
 
     [ WT.Noun, expand_csv( nouns ) ],
 
@@ -155,7 +180,11 @@ nodes = create_dic([
 
     [ WT.ComparativeAdjective, expand_csv( comparative_adjectives ) ],
 
-    [ WT.Verb, expand_csv( verbs + gerund_verbs ) ],
+    [ WT.Verb, expand_csv( verbs ) ],
+
+    [ WT.GerundVerb, expand_csv( gerund_verbs ) ],
+
+    [ WT.InfinitiveVerb, expand_csv( infinitive_verbs ) ],
 
     [ WT.Adverb, expand_csv( adverbs ) ],
 
@@ -163,6 +192,18 @@ nodes = create_dic([
 ])
 
 # chck [14], [15], [20], [23], [27]
+
+# TODO:
+# store these as functions that take one argument?
+# then just get rid of all of them in the create_dic function and just have it
+# so when the parser hits one of these types it'll be a tuple like so: ( WT.Verb, <search_structure> )
+# and the parser will throw the argument into the appropriate following function:
+# ( do it for predicate too? )
+# search_word_types = { WT.Verb : Verb.search, WT.Noun : Noun.search, WT.Predicate : Verb.search but with predicate???
+
+### OR NOT!
+# maybe we just need a few more specific categories, since there aren't that many. 
+
 
 def get_expansions(node):
 # summary: return list of child nodes
