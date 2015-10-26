@@ -15,6 +15,8 @@ def tree_str(nodes):
     for a_idx, ancestry in enumerate(ancestries):
         a_str = ""
         for n_idx, node in enumerate(ancestry):
+            if str(node)[-1:][0] == "_":
+                continue
             def arrow(idx): return " -> " if idx != 0 else ""
             if a_idx == 0:
                 a_str += arrow(n_idx) + str(node)
