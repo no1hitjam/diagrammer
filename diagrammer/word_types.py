@@ -73,11 +73,11 @@ def expand_csv(csv_str):
    
 # import words
 # TODO: actual importing
-nouns = "Fred, Harry, chair, couch, table, down, "
+nouns = "Fred, Harry, chair, chairs, couch, table, down, "
 
 participles =  "crumbling, fighting, "
 
-adjectives = "the, a, smelly, purple, green, blue, "
+adjectives = "the, a, smelly, purple, green, blue, nice, "
 
 comparative_adjectives = "taller, shorter, smarter, purpler, better, "
 
