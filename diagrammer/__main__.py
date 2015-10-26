@@ -1,3 +1,3 @@
-from console import console_loop
+﻿import console
 
-console_loop()
+console.console_loop()
