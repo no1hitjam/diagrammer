@@ -24,6 +24,7 @@ WT = Enum(
     'Adjective',
     'Verb_',
     'Verb',
+    'VerbWord',
     'GerundVerb_',
     'GerundVerb',
     'InfinitivePhrase',
@@ -70,27 +71,50 @@ def Compound( word_type, compoundable_type ):
 
 def expand_csv(csv_str):
     return map(lambda x: x.split(" "), csv_str[:-2].split(", "))
-   
+
+def list2D_firstWordDic(list2D):
+    result = {}
+    for word_list in list2D:
+        first_word = word_list[0]
+        if first_word in result:
+            result[first_word].append(word_list)
+        else:
+            result[first_word] = [word_list]
+    return result
+
+def firstWordDictGet(item, dict): return dict[item] if item in dict else []
+
 # import words
 # TODO: actual importing
-nouns = "Fred, Harry, chair, chairs, couch, table, down, "
+nouns = list2D_firstWordDic( expand_csv( "Fred, Harry, chair, chairs, couch, table, down, " ) )
 
-participles =  "crumbling, fighting, "
+participles = list2D_firstWordDic( expand_csv( "crumbling, fighting, " ) )
 
-adjectives = "the, a, smelly, purple, green, blue, nice, "
+comparative_adjectives = list2D_firstWordDic( expand_csv( "taller, shorter, smarter, purpler, better, " ) )
 
-comparative_adjectives = "taller, shorter, smarter, purpler, better, "
+adjectives = list2D_firstWordDic( expand_csv( "the, a, smelly, purple, green, blue, nice, " ) )
 
-gerund_verbs = "sitting, painting, being, "
+gerund_verbs = list2D_firstWordDic( expand_csv( "sitting, painting, being, " ) )
 
-infinitive_verbs = "to sit, to paint, to be, "
+infinitive_verbs = list2D_firstWordDic( expand_csv( "to sit, to paint, to be, " ) )
 
-verbs = "sat, sit, sits, painted, paint, paints, is, was, be, will be, are, " + gerund_verbs + infinitive_verbs
+verbs = list2D_firstWordDic( expand_csv( "sat, sit, sits, painted, paint, paints, is, was, be, will be, are, " ) )
 
-adverbs = "quickly, smartly, smellily, quietly, "
+adverbs = list2D_firstWordDic( expand_csv( "quickly, smartly, smellily, quietly, " ) )
 
-prepositions = "in, under, around, on, "
+prepositions = list2D_firstWordDic( expand_csv( "in, under, around, on, " ) )
 
+word_strings = {
+    WT.Noun : lambda x: firstWordDictGet(x, nouns),
+    WT.Participle : lambda x: firstWordDictGet(x, participles),
+    WT.ComparativeAdjective : lambda x: firstWordDictGet(x, comparative_adjectives),
+    WT.Adjective : lambda x: firstWordDictGet(x, adjectives) + firstWordDictGet(x, comparative_adjectives) + firstWordDictGet(x, participles),
+    WT.GerundVerb : lambda x: firstWordDictGet(x, gerund_verbs),
+    WT.InfinitiveVerb : lambda x: firstWordDictGet(x, infinitive_verbs),
+    WT.VerbWord : lambda x: firstWordDictGet(x, verbs) + firstWordDictGet(x, gerund_verbs) + firstWordDictGet(x, infinitive_verbs),
+    WT.Adverb : lambda x: firstWordDictGet(x, adverbs),
+    WT.Preposition : lambda x: firstWordDictGet(x, prepositions)
+}
 
 # create tree structure
 nodes = create_dic([
@@ -172,26 +196,46 @@ nodes = create_dic([
     # TODO: These need to be different. Not just a list of strings, these are structures that need
     #       some sort of search parameter passed in to find what we're looking for.
 
-    [ WT.Noun, expand_csv( nouns ) ],
+    #[ WT.Noun, expand_csv( nouns ) ],
 
-    [ WT.Participle, expand_csv(participles) ],
+    #[ WT.Participle, expand_csv(participles) ],
 
-    [ WT.Adjective, expand_csv( adjectives + comparative_adjectives + participles) ],
+    #[ WT.Adjective, expand_csv( adjectives + comparative_adjectives + participles) ],
 
-    [ WT.ComparativeAdjective, expand_csv( comparative_adjectives ) ],
+    #[ WT.ComparativeAdjective, expand_csv( comparative_adjectives ) ],
 
-    [ WT.Verb, expand_csv( verbs ) ],
+    [ WT.Verb, [ [ WT.VerbWord ],
+                 [ "has", WT.VerbWord ],
+                 [ "has", "been", WT.VerbWord ],
+                 [ "had", WT.VerbWord ],
+                 [ "had", "been", WT.VerbWord ],
+                 [ "will", WT.VerbWord ],
+                 [ "will", "have", WT.VerbWord ],
+                 [ "will", "be", WT.VerbWord ],
+                 [ "will", "have", "been", WT.VerbWord ],
+                 [ "would", WT.VerbWord ],
+                 [ "would", "have", WT.VerbWord ],
+                 [ "would", "have", "been", WT.VerbWord ],
+                 [ "am", WT.VerbWord ],
+                 [ "is", WT.VerbWord ],
+                 [ "are", WT.VerbWord ]
+    ] ]
 
-    [ WT.GerundVerb, expand_csv( gerund_verbs ) ],
+    #[ WT.GerundVerb, expand_csv( gerund_verbs ) ],
 
-    [ WT.InfinitiveVerb, expand_csv( infinitive_verbs ) ],
+    #[ WT.InfinitiveVerb, expand_csv( infinitive_verbs ) ],
 
-    [ WT.Adverb, expand_csv( adverbs ) ],
+    #[ WT.Adverb, expand_csv( adverbs ) ],
 
-    [ WT.Preposition, expand_csv( prepositions ) ]
+    #[ WT.Preposition, expand_csv( prepositions ) ]
 ])
 
 # chck [14], [15], [20], [23], [27]
+
+
+
+
+
 
 # TODO:
 # store these as functions that take one argument?
@@ -213,4 +257,4 @@ def get_expansions(node):
         if node in nodes:
             return nodes[node]
         else:
-            return [["Error: word not it nodes dictionary"]]
+            return [["Error: word not in nodes dictionary"]]

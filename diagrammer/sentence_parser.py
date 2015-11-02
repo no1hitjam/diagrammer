@@ -1,6 +1,7 @@
 ﻿# parser.py
 # summary: where imported string lists are parsed into trees
 
+import word_types
 from word_types import WT
 from word_types import get_expansions
 
@@ -21,9 +22,19 @@ class ParseNode:
     def __str__(self):
         return str(self.word)
 
-def ParseNodifyExpansions(parent):
+def ParseNodifyExpansions2(parent):
 # summary: store parent information at every node
-    expansions = get_expansions(parent.word)
+    expansions = word_types.get_expansions(parent.word)
+    parsed_expansions = []
+    for expansion in expansions:
+        parsed_expansion = []
+        for word in expansion:
+            parsed_expansion.append(ParseNode(word, parent))
+        parsed_expansions.append(parsed_expansion)
+    return parsed_expansions
+
+def ParseNodifyExpansions(parent, expansions):
+# summary: store parent information at every expansion node
     parsed_expansions = []
     for expansion in expansions:
         parsed_expansion = []
@@ -46,19 +57,30 @@ def parse_string_list(input_word_list):
             # check if node_list is too small and needs to be skipped
             if len(node_list) <= idx: continue
             # if the current index is a str, check if it matches the current word
-            if type(node_list[idx].word) is str:
+            node_list_word = node_list[idx].word
+            if type(node_list_word) is str:
                 #print node_list[idx] + ", " + cur_word
-                if node_list[idx].word == cur_word:    
+                if node_list_word == cur_word:    
                     str_match_lists.append(node_list)
+                    continue
                 else:
                     continue
+            def insertExpansion(expansion, idx, node_list):
+            # summary: replace idx in node list with expansion
+                return node_list[:idx] + expansion + (node_list[idx + 1:] if idx + 1 < len(node_list) else [])
+            # if the current index can get a string, check if it can get a match to the current word
+            if node_list_word in word_types.word_strings:
+                # if so, create nodes with the enum replaced with all possible words and add them to str_match_list
+                for expansion in ParseNodifyExpansions(node_list[idx], word_types.word_strings[node_list_word](cur_word)):
+                    str_match_lists.append(insertExpansion(expansion, idx, node_list))
+                continue
             # otherwise, expand
-            else:
-                for expansion in ParseNodifyExpansions(node_list[idx]):
-                    node_lists.append(node_list[:idx] + expansion + (node_list[idx + 1:] if idx + 1 < len(node_list) else []))
+            for expansion in ParseNodifyExpansions(node_list[idx], word_types.get_expansions(node_list[idx].word)):
+                node_lists.append(insertExpansion(expansion, idx, node_list))
+            # -- print_node_lists(node_lists)
         # prepare for next set of lists
         node_lists = str_match_lists
-        # print_node_lists(node_lists) # DEBUG
+        # -- print_node_lists(node_lists)
         idx += 1
 
     # return size appropriate node_lists
