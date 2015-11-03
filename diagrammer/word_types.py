@@ -62,11 +62,11 @@ def create_dic(expansion_blueprint_list):
                     nodes[key].append(list(expansion) + list(post_expansion))
     return nodes
 
-def Compound( word_type, compoundable_type ):
+def Compound( word_types, compoundable_type ):
 # TODO: "or" and "but", and general smartness
-    return [ [ word_type ],
-             [ word_type, ",", compoundable_type ],
-             [ word_type, "and", compoundable_type ] ]
+    return [ word_types,
+             word_types + [ ",", compoundable_type ],
+             word_types + [ "and", compoundable_type ] ]
 
 
 def expand_csv(csv_str):
@@ -98,7 +98,11 @@ gerund_verbs = list2D_firstWordDic( expand_csv( "sitting, painting, being, " ) )
 
 infinitive_verbs = list2D_firstWordDic( expand_csv( "to sit, to paint, to be, " ) )
 
-verbs = list2D_firstWordDic( expand_csv( "sat, sit, sits, painted, paint, paints, is, was, be, will be, are, " ) )
+# verbs = list2D_firstWordDic( expand_csv( "sat, sit, sits, painted, paint, paints, is, was, be, will be, are, " ) )
+
+import json
+with open('diagrammer/data/verbs.json') as verbs_json:    
+    verbs = json.load(verbs_json)
 
 adverbs = list2D_firstWordDic( expand_csv( "quickly, smartly, smellily, quietly, " ) )
 
@@ -109,9 +113,9 @@ word_strings = {
     WT.Participle : lambda x: firstWordDictGet(x, participles),
     WT.ComparativeAdjective : lambda x: firstWordDictGet(x, comparative_adjectives),
     WT.Adjective : lambda x: firstWordDictGet(x, adjectives) + firstWordDictGet(x, comparative_adjectives) + firstWordDictGet(x, participles),
-    WT.GerundVerb : lambda x: firstWordDictGet(x, gerund_verbs),
-    WT.InfinitiveVerb : lambda x: firstWordDictGet(x, infinitive_verbs),
-    WT.VerbWord : lambda x: firstWordDictGet(x, verbs) + firstWordDictGet(x, gerund_verbs) + firstWordDictGet(x, infinitive_verbs),
+    WT.GerundVerb : lambda x: [[x]] if x in verbs['gerunds'] else [],
+    WT.InfinitiveVerb : lambda x: [[x]] if x in verbs['infinitives'] else [], # firstWordDictGet(x, infinitive_verbs),
+    WT.VerbWord : lambda x: [[x]] if x in verbs['all'] else [], #firstWordDictGet(x, verbs) + firstWordDictGet(x, gerund_verbs) + firstWordDictGet(x, infinitive_verbs),
     WT.Adverb : lambda x: firstWordDictGet(x, adverbs),
     WT.Preposition : lambda x: firstWordDictGet(x, prepositions)
 }
@@ -126,7 +130,7 @@ nodes = create_dic([
 
     [ WT.Subject, [ [ WT.Object_ ] ] ],
 
-    [ WT.Predicate_, Compound ( WT.Predicate, WT.Predicate_ ) ],
+    [ WT.Predicate_, Compound ( [WT.Predicate], WT.Predicate_ ) ],
 
     [ WT.Predicate, [ [ WT.Verb ], 
                       [ WT.Verb, WT.IndirectObject, WT.DirectObject ],     # [12] Indirect object
@@ -175,19 +179,19 @@ nodes = create_dic([
     ] ],
 
     # compoundables
-    [ WT.Object_, Compound( WT.Object, WT.Object_ ) + [
-                          [ WT.InfinitivePhrase ]
+    [ WT.Object_, Compound( [ WT.Object ], WT.Object_ ) + [
+                            [ WT.InfinitivePhrase ]
     ] ],
 
-    [ WT.Verb_, Compound( WT.Verb, WT.Verb_ ) ],
+    [ WT.Verb_, Compound( [ WT.Verb ], WT.Verb_ ) ],
 
-    [ WT.GerundVerb_, Compound( WT.GerundVerb, WT.GerundVerb_ ) ], 
+    [ WT.GerundVerb_, Compound( [WT.GerundVerb], WT.GerundVerb_ ) ], 
 
-    [ WT.InfinitiveVerb_, Compound( WT.InfinitiveVerb, WT.Verb_ ) ],
+    [ WT.InfinitiveVerb_, Compound( [ "to", WT.InfinitiveVerb ], WT.Verb_ ) ],
 
-    [ WT.Adjective_, Compound( WT.Adjective, WT.Adjective_ ) ],
+    [ WT.Adjective_, Compound( [ WT.Adjective ], WT.Adjective_ ) ],
 
-    [ WT.Adverb_, Compound ( WT.Adverb, WT.Adverb_ ), 
+    [ WT.Adverb_, Compound ( [ WT.Adverb ], WT.Adverb_ ), 
         [ # added to the end of every expansion
         [ WT.PrepositionPhrase ]
     ] ],
@@ -205,20 +209,26 @@ nodes = create_dic([
     #[ WT.ComparativeAdjective, expand_csv( comparative_adjectives ) ],
 
     [ WT.Verb, [ [ WT.VerbWord ],
-                 [ "has", WT.VerbWord ],
-                 [ "has", "been", WT.VerbWord ],
-                 [ "had", WT.VerbWord ],
-                 [ "had", "been", WT.VerbWord ],
                  [ "will", WT.VerbWord ],
                  [ "will", "have", WT.VerbWord ],
                  [ "will", "be", WT.VerbWord ],
                  [ "will", "have", "been", WT.VerbWord ],
                  [ "would", WT.VerbWord ],
                  [ "would", "have", WT.VerbWord ],
+                 [ "would", "be", WT.VerbWord ],
                  [ "would", "have", "been", WT.VerbWord ],
+                 [ "have", WT.VerbWord ],
+                 [ "have", "been", WT.VerbWord ],
+                 [ "has", WT.VerbWord ],
+                 [ "has", "been", WT.VerbWord ],
+                 [ "had", WT.VerbWord ],
+                 [ "had", "been", WT.VerbWord ],
                  [ "am", WT.VerbWord ],
                  [ "is", WT.VerbWord ],
-                 [ "are", WT.VerbWord ]
+                 [ "are", WT.VerbWord ],
+                 [ "were", WT.VerbWord ],
+                 [ "was", WT.VerbWord ],
+                 [ "to", WT.InfinitiveVerb ]
     ] ]
 
     #[ WT.GerundVerb, expand_csv( gerund_verbs ) ],
