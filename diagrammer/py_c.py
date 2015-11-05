@@ -1,4 +1,3 @@
-
 import c_example
 
 print "Result from myFunction:", c_example.myFunction()

@@ -1,4 +1,3 @@
-
 #include <Python.h>
 
 // Function to be called from Python
