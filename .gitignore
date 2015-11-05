@@ -3,3 +3,6 @@
 
 # Python output
 *.pyc
+
+# Idea thingy
+.idea/*
