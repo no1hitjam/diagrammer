@@ -2,7 +2,7 @@
 # summary: contains data structures for holding tree of words and word types
 
 import json
-
+import wordnet_get
 
 class WT:
     def __init__(self):
@@ -123,7 +123,7 @@ word_strings = {
         first_word_dict_get(x, participles),
     WT.GerundVerb: lambda x: [[x]] if x in verbs['gerunds'] else [],
     WT.InfinitiveVerb: lambda x: [[x]] if x in verbs['infinitives'] else [],
-    WT.VerbWord: lambda x: [[x]] if x in verbs['all'] else [],
+    WT.VerbWord: lambda x: [[x]] if wordnet_get.verb(x) else [],
     WT.Adverb: lambda x: first_word_dict_get(x, adverbs),
     WT.Preposition: lambda x: first_word_dict_get(x, prepositions)
 }

@@ -3,3 +3,5 @@
 
 # Python output
 *.pyc
+
+.idea/*
