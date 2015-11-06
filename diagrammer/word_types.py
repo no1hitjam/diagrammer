@@ -1,8 +1,8 @@
 ﻿# word_types.py
 # summary: contains data structures for holding tree of words and word types
 
-import json
 import wordnet_get
+
 
 class WT:
     def __init__(self):
@@ -105,24 +105,20 @@ infinitive_verbs = list2d_first_word_dic(expand_csv("to sit, to paint, to be, ")
 
 # verbs = list2D_firstWordDic(expand_csv("sat, sit, sits, painted, paint, paints, is, was, be, will be, are, "))
 
-
-with open('diagrammer/data/verbs.json') as verbs_json:
-    verbs = json.load(verbs_json)
-
 adverbs = list2d_first_word_dic(expand_csv("quickly, smartly, smellily, quietly, "))
 
 prepositions = list2d_first_word_dic(expand_csv("in, under, around, on, "))
 
 word_strings = {
-    WT.Noun: lambda x: first_word_dict_get(x, nouns),
+    WT.Noun: lambda x: [[x]] if wordnet_get.noun(x) else [],
     WT.Participle: lambda x: first_word_dict_get(x, participles),
     WT.ComparativeAdjective: lambda x: first_word_dict_get(x, comparative_adjectives),
     WT.Adjective: lambda x:
         first_word_dict_get(x, adjectives) +
         first_word_dict_get(x, comparative_adjectives) +
         first_word_dict_get(x, participles),
-    WT.GerundVerb: lambda x: [[x]] if x in verbs['gerunds'] else [],
-    WT.InfinitiveVerb: lambda x: [[x]] if x in verbs['infinitives'] else [],
+    WT.GerundVerb: lambda x: [[x]] if wordnet_get.verb(x) else [],
+    WT.InfinitiveVerb: lambda x: [[x]] if wordnet_get.verb(x) else [],
     WT.VerbWord: lambda x: [[x]] if wordnet_get.verb(x) else [],
     WT.Adverb: lambda x: first_word_dict_get(x, adverbs),
     WT.Preposition: lambda x: first_word_dict_get(x, prepositions)
