@@ -3,6 +3,7 @@
 
 import word_types
 from word_types import WT
+import console_print
 
 
 def print_node_lists(node_lists):
@@ -76,6 +77,10 @@ def parse_string_list(input_word_list):
             for expansion in parse_nodify_expansions(node_list[idx], word_types.get_expansions(node_list[idx].word)):
                 node_lists.append(insert_expansion(expansion, idx, node_list))
             # print_node_lists(node_lists)
+        # if no matches, leave function
+        if len(str_match_lists) == 0:
+            console_print.string("Could not match '" + input_word_list[idx] + "'", console_print.WHOOPS)
+            return []
         # prepare for next set of lists
         node_lists = str_match_lists
         # -- print_node_lists(node_lists)

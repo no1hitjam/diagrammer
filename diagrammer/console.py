@@ -2,6 +2,7 @@
 # summary: deals with console I/O
 
 import sentence_parser
+import console_print
 
 
 def get_ancestry_list(node):
@@ -52,8 +53,9 @@ def split_sentence(sentence_str):
 
 
 def console_loop():
+    console_print.string("Sentence Diagrammer", console_print.BOLD)
+    console_print.string("(enter 'q' to quit)", console_print.NORMAL)
     # asks for the user to input a new sentence and outputs the tree... forever...
-    print "Enter 'q' to quit"
     input_str = ""
     while input_str != "q":
         input_str = raw_input("Enter sentence:\n")
