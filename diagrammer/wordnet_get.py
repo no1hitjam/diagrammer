@@ -4,6 +4,8 @@ wordnet_dict_dir = 'diagrammer/WordNet-3.0/dict/'
 
 verb_file_str = open(wordnet_dict_dir + 'verb.exc', 'r').read()
 noun_file_str = open(wordnet_dict_dir + 'noun.exc', 'r').read()
+adj_file_str = open(wordnet_dict_dir + 'adj.exc', 'r').read()
+adv_file_str = open(wordnet_dict_dir + 'adv.exc', 'r').read()
 
 
 def search_exc(word_str, exc_file_str):
@@ -18,3 +20,11 @@ def verb(word_str):
 
 def noun(word_str):
     return search_exc(word_str, noun_file_str)
+
+
+def adj(word_str):
+    return search_exc(word_str, adj_file_str)
+
+
+def adv(word_str):
+    return search_exc(word_str, adv_file_str)

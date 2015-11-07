@@ -114,13 +114,13 @@ word_strings = {
     WT.Participle: lambda x: first_word_dict_get(x, participles),
     WT.ComparativeAdjective: lambda x: first_word_dict_get(x, comparative_adjectives),
     WT.Adjective: lambda x:
-        first_word_dict_get(x, adjectives) +
+        [[x]] if wordnet_get.adj(x) else [] +
         first_word_dict_get(x, comparative_adjectives) +
         first_word_dict_get(x, participles),
     WT.GerundVerb: lambda x: [[x]] if wordnet_get.verb(x) else [],
     WT.InfinitiveVerb: lambda x: [[x]] if wordnet_get.verb(x) else [],
     WT.VerbWord: lambda x: [[x]] if wordnet_get.verb(x) else [],
-    WT.Adverb: lambda x: first_word_dict_get(x, adverbs),
+    WT.Adverb: lambda x: [[x]] if wordnet_get.adv(x) else [],
     WT.Preposition: lambda x: first_word_dict_get(x, prepositions)
 }
 
